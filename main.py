@@ -18,6 +18,10 @@ genai.configure(api_key=GEMINI_API_KEY)
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
+@app.route("/")
+def index():
+    return "LINE BOT is running!"  # ← これが `/` にアクセスしたときの表示
+
 @app.route("/api/webhook", methods=["POST"])
 def webhook():
     signature = request.headers.get("X-Line-Signature", "")
