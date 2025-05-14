@@ -37,6 +37,22 @@ def webhook():
 
     return "OK"
 
+@app.route("/broadcast", methods=["POST"])
+def broadcast():
+    data = request.get_json()
+    message = data.get("message", "")
+
+    if not message:
+        return "No message provided", 400
+
+    try:
+        # 全ユーザーに送る（注意：実際には broadcast は認可必要）
+        line_bot_api.broadcast(TextSendMessage(text=message))
+        return "Message broadcasted", 200
+    except Exception as e:
+        return f"Error: {str(e)}", 500
+
+
 @line_handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_message = event.message.text
