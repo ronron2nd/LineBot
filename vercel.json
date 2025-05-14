@@ -3,6 +3,8 @@
     { "src": "main.py", "use": "@vercel/python" }
   ],
   "routes": [
-    { "src": "/.*", "dest": "main.py" }
+    { "src": "/api/webhook", "methods": ["POST"], "dest": "main.py" },
+    { "src": "/broadcast", "methods": ["POST"], "dest": "main.py" },
+    { "src": "/", "methods": ["GET"], "dest": "main.py" }
   ]
 }
