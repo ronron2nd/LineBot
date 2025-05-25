@@ -5,6 +5,7 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
+from datetime import date
 
 # .env ファイル読み込み（ローカル開発用、Vercel では環境変数を設定）
 load_dotenv()
@@ -39,16 +40,27 @@ def webhook():
 
 @app.route("/broadcast", methods=["POST"])
 def broadcast():
-    data = request.get_json()
-    message = data.get("message", "")
-
-    if not message:
-        return "No message provided", 400
+    today = date.today()
+    today_str = today.strftime("%-m月%-d日")  # 例: 5月24日
 
     try:
-        # 全ユーザーに送る（注意：実際には broadcast は認可必要）
-        line_bot_api.broadcast(TextSendMessage(text=message))
-        return "Message broadcasted", 200
+        # Gemini で雑学を生成
+        model = genai.GenerativeModel('gemini-2.0-pro')  # 高精度モデルに変更も可
+        prompt = f"""
+        今日は{today_str}です。この日に関する日本の雑学や歴史的な出来事、記念日、文化的な話題などを1〜2分で読める日本語の文章で紹介してください。
+        できるだけ簡単な言葉で、日常会話のような自然な文章にしてください。
+        """
+        response = model.generate_content(prompt)
+        trivia_text = response.text.strip()
+
+        # 挨拶メッセージを先頭に追加
+        greeting = f"おはようございます！\n今日は{today_str}です！\n\n"
+        full_message = greeting + trivia_text
+
+        # LINE に一斉送信
+        line_bot_api.broadcast(TextSendMessage(text=full_message))
+        return "Trivia with greeting broadcasted", 200
+
     except Exception as e:
         return f"Error: {str(e)}", 500
 
