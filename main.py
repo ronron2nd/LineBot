@@ -45,7 +45,7 @@ def broadcast():
 
     try:
         # Gemini で雑学を生成
-        model = genai.GenerativeModel('gemini-2.0-pro')  # 高精度モデルに変更も可
+        model = genai.GenerativeModel('gemini-2.0-flash-exp')  # 高精度モデルに変更も可
         prompt = f"""
         今日は{today_str}です。この日に関する日本の雑学や歴史的な出来事、記念日、文化的な話題などを1〜2分で読める日本語の文章で紹介してください。
         できるだけ簡単な言葉で、日常会話のような自然な文章にしてください。
